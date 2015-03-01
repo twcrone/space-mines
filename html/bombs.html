@@ -71,12 +71,12 @@
                     default:
                         this.cover.color.setRGB(0.1, 0.2,0.8);
                 }
-            }
+            };
 
             this.incrementBombCount = function() {
                 this.bombCount++;
                 this.setHeat();
-            }
+            };
 
             this.heats = ["blue", "green", "yellow", "orange", "red"];
 
@@ -87,11 +87,11 @@
                 else {
                     this.setColor(this.heats[this.bombCount]);
                 }
-            }
+            };
 
             this.toString = function() {
                 return "x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", isBomb=" + this.isBomb;
-            }
+            };
 
             this.setHeat();
         }
@@ -102,18 +102,18 @@
 
             this.getIndex = function(x, y, z) {
                 return x  + y * dimension + z * dimension * dimension;
-            }
+            };
 
             this.addBomb = function(bomb) {
                 var index = this.getIndex(bomb.x, bomb.y, bomb.z);
                 this.bombStore[index] = bomb;
                 bomb.setHeat();
-            }
+            };
 
             this.getBomb = function(x, y, z) {
                 var index = this.getIndex(x, y, z);
                 return this.bombStore[index];
-            }
+            };
 
             this.placeBomb = function(bx, by, bz) {
                 var bomb = this.getBomb(bx, by, bz);
@@ -129,12 +129,12 @@
                     }
 
                 }
-            }
+            };
 
             this.incrementBombCountOn = function(x, y, z) {
                 var bomb = this.getBomb(x, y, z);
                 if(bomb !== undefined) { bomb.incrementBombCount(); }
-            }
+            };
         }
 
         var bombs = new Bombs(6);
@@ -146,8 +146,6 @@
                     var bomb = new Bomb(x, y, z);
                     bombs.addBomb(bomb);
                     bomb = bombs.getBomb(x, y, z);
-                    //scene.add(bomb.mesh);
-                    //console.log("x=" + x + ", y=" + y + ", z=" + z + ", i=" + bombs.getIndex(x, y, z));
                 }
             }
         }
@@ -158,11 +156,8 @@
         bombs.placeBomb(3, 1, 3);
 
         for(var i = 0; i < bombs.bombStore.length; i++) {
-            //console.log(i);
-            var bomb = bombs.bombStore[i];
-            //if(bomb.bombCount > 0) {
-                scene.add(bomb.mesh);
-            //}
+            bomb = bombs.bombStore[i];
+            scene.add(bomb.mesh);
         }
 
         var flyControls = new THREE.FlyControls(camera);
