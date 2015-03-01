@@ -170,10 +170,10 @@
 
         var flyControls = new THREE.FlyControls(camera);
 
-        flyControls.movementSpeed = 25;
+        flyControls.movementSpeed = 200;
         flyControls.domElement = document.querySelector("#WebGL-output");
         flyControls.rollSpeed = Math.PI / 24;
-        flyControls.autoForward = true;
+        flyControls.autoForward = false;
         flyControls.dragToLook = false;
 
         document.getElementById("WebGL-output").appendChild(renderer.domElement);
