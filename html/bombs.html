@@ -56,20 +56,20 @@
 
             this.setColor = function(color) {
                 switch(color) {
-                    case "green":
-                        this.cover.color.setRGB(0, 1, 0);
-                        break;
-                    case "yellow":
-                        this.cover.color.setRGB(1, 1, 0);
+                    case "red":
+                        this.cover.color.setRGB(0.8, 0, 0.1);
                         break;
                     case "orange":
-                        this.cover.color.setRGB(1, 0.5, 0.25);
+                        this.cover.color.setRGB(0.5, 0.1, 0.2);
                         break;
-                    case "red":
-                        this.cover.color.setRGB(1, 0, 0);
+                    case "yellow":
+                        this.cover.color.setRGB(0.3, 0.1, 0.3);
+                        break;
+                    case "green":
+                        this.cover.color.setRGB(0.2, 0.2, 0.5);
                         break;
                     default:
-                        this.cover.color.setRGB(0, 0, 1);
+                        this.cover.color.setRGB(0.1, 0.2,0.8);
                 }
             }
 
@@ -134,13 +134,10 @@
             this.incrementBombCountOn = function(x, y, z) {
                 var bomb = this.getBomb(x, y, z);
                 if(bomb !== undefined) { bomb.incrementBombCount(); }
-                else {
-                    //console.log("x=" + x + ", y=" + y + ", z=" + z + ", i=" + this.getIndex(x, y, z));
-                }
             }
         }
 
-        var bombs = new Bombs(4);
+        var bombs = new Bombs(6);
         var d = bombs.dimension;
 
         for(var x = 0; x < d; x++) {
@@ -155,18 +152,18 @@
             }
         }
 
+        bombs.placeBomb(2, 3, 1);
+        bombs.placeBomb(3, 3, 2);
+        bombs.placeBomb(2, 2, 1);
+        bombs.placeBomb(3, 1, 3);
+
         for(var i = 0; i < bombs.bombStore.length; i++) {
             //console.log(i);
-            scene.add(bombs.bombStore[i].mesh);
+            var bomb = bombs.bombStore[i];
+            //if(bomb.bombCount > 0) {
+                scene.add(bomb.mesh);
+            //}
         }
-
-        bombs.placeBomb(1, 1, 1);
-
-//        var trackballControls = new THREE.TrackballControls(camera);
-//
-//        trackballControls.rotateSpeed = 1.0;
-//        trackballControls.zoomSpeed = 1.0;
-//        trackballControls.panSpeed = 1.0;
 
         var flyControls = new THREE.FlyControls(camera);
 
@@ -181,7 +178,6 @@
         var clock = new THREE.Clock();
 
         render();
-
 
         function render() {
             var delta = clock.getDelta();
