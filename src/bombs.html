@@ -168,23 +168,29 @@
 //        trackballControls.zoomSpeed = 1.0;
 //        trackballControls.panSpeed = 1.0;
 
-        var controls = new THREE.FlyControls(camera);
-        controls.movementSpeed = 100;
-        controls.domElement = document.querySelector('#WebGL-output');
-        controls.rollSpeed = Math.PI / 24;
-        controls.autoForward = false;
-        controls.dragToLook = false;
+        var flyControls = new THREE.FlyControls(camera);
+
+        flyControls.movementSpeed = 25;
+        flyControls.domElement = document.querySelector("#WebGL-output");
+        flyControls.rollSpeed = Math.PI / 24;
+        flyControls.autoForward = true;
+        flyControls.dragToLook = false;
+
+        document.getElementById("WebGL-output").appendChild(renderer.domElement);
 
         var clock = new THREE.Clock();
 
-        $('WebGL-output').append(renderer.domElement);
+        render();
+
+
         function render() {
             var delta = clock.getDelta();
-            controls.update(delta);
+            flyControls.update(delta);
+            renderer.clear();
+            // render using requestAnimationFrame
             requestAnimationFrame(render);
             renderer.render(scene, camera);
         }
-        render();
     }
     window.onload = init;
 
