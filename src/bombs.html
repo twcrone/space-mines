@@ -5,8 +5,9 @@
 <head>
     <title>Example 01.04 - Materials, light and animation</title>
     <script type="text/javascript" src="../libs/three.js"></script>
-
     <script type="text/javascript" src="../libs/stats.js"></script>
+    <script type="text/javascript" src="../libs/FlyControls.js"></script>
+    <script type="text/javascript" src="../libs/jquery-1.9.0.js"></script>
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -51,7 +52,7 @@
             this.shape = new THREE.SphereGeometry(50, 20, 15);
             this.cover = new THREE.MeshBasicMaterial();
             this.mesh = new THREE.Mesh(this.shape, this.cover);
-            this.mesh.position.set((this.x + 2) * 250, (this.y) * 250, (this.z - 6) * 250);
+            this.mesh.position.set((this.x - 2) * 250, (this.y - 1) * 250, (this.z - 3) * 250);
 
             this.setColor = function(color) {
                 switch(color) {
@@ -161,35 +162,29 @@
 
         bombs.placeBomb(1, 1, 1);
 
-        //var trackballControlls = new THREE.TrackballControls(camera);
+//        var trackballControls = new THREE.TrackballControls(camera);
+//
+//        trackballControls.rotateSpeed = 1.0;
+//        trackballControls.zoomSpeed = 1.0;
+//        trackballControls.panSpeed = 1.0;
 
+        var controls = new THREE.FlyControls(camera);
+        controls.movementSpeed = 100;
+        controls.domElement = document.querySelector('#WebGL-output');
+        controls.rollSpeed = Math.PI / 24;
+        controls.autoForward = false;
+        controls.dragToLook = false;
 
-        var marker = new THREE.Object3D();
-        scene.add(marker);
-        marker.add(camera);
+        var clock = new THREE.Clock();
 
-        document.addEventListener('keydown', function(event) {
-            var code = event.keyCode;
-            if (code == 37) marker.position.x = marker.position.x-10;
-            if (code == 38) marker.position.z = marker.position.z-10;
-            if (code == 39) marker.position.x = marker.position.x+10;
-            if (code == 40) marker.position.z = marker.position.z+10;
-            if (code == 87) marker.position.y = marker.position.y+10;
-            if (code == 83) marker.position.y = marker.position.y-10;
-            if (code == 72) showHelpDialog();
-            //console.log(code);
-        });
-
-        function showHelpDialog() {
-            var msg = "Use arrow keys to move forward, backward and side-to-side.  Use 'W' to move up and 'S' to move down.";
-            alert(msg);
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
+        $('WebGL-output').append(renderer.domElement);
+        function render() {
+            var delta = clock.getDelta();
+            controls.update(delta);
+            requestAnimationFrame(render);
             renderer.render(scene, camera);
         }
-        animate();
+        render();
     }
     window.onload = init;
 
