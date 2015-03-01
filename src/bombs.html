@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Example 01.04 - Materials, light and animation</title>
+    <script type="text/javascript" src="../libs/three.js"></script>
+
+    <script type="text/javascript" src="../libs/stats.js"></script>
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<div id="Stats-output">
+</div>
+<!-- Div which will hold the Output -->
+<div id="WebGL-output">
+</div>
+
+<!-- Javascript code that runs our Three.js examples -->
+<script type="text/javascript">
+
+    // once everything is loaded, we run our Three.js stuff.
+    function init() {
+
+        var scene = new THREE.Scene();
+
+        // This is what sees the stuff:
+        var aspect_ratio = window.innerWidth / window.innerHeight;
+        var camera = new THREE.PerspectiveCamera(75, aspect_ratio, 1, 10000);
+        camera.position.z = 500;
+        scene.add(camera);
+
+        // This will draw what the camera sees onto the screen:
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        function Bomb(x, y, z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.bombCount = 0;
+            this.isBomb = false;
+            this.shape = new THREE.SphereGeometry(50, 20, 15);
+            this.cover = new THREE.MeshBasicMaterial();
+            this.mesh = new THREE.Mesh(this.shape, this.cover);
+            this.mesh.position.set((this.x + 2) * 250, (this.y) * 250, (this.z - 6) * 250);
+
+            this.setColor = function(color) {
+                switch(color) {
+                    case "green":
+                        this.cover.color.setRGB(0, 1, 0);
+                        break;
+                    case "yellow":
+                        this.cover.color.setRGB(1, 1, 0);
+                        break;
+                    case "orange":
+                        this.cover.color.setRGB(1, 0.5, 0.25);
+                        break;
+                    case "red":
+                        this.cover.color.setRGB(1, 0, 0);
+                        break;
+                    default:
+                        this.cover.color.setRGB(0, 0, 1);
+                }
+            }
+
+            this.incrementBombCount = function() {
+                this.bombCount++;
+                this.setHeat();
+            }
+
+            this.heats = ["blue", "green", "yellow", "orange", "red"];
+
+            this.setHeat = function() {
+                if(this.isBomb || this.bombCount > 4) {
+                    this.setColor("red");
+                }
+                else {
+                    this.setColor(this.heats[this.bombCount]);
+                }
+            }
+
+            this.toString = function() {
+                return "x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", isBomb=" + this.isBomb;
+            }
+
+            this.setHeat();
+        }
+
+        function Bombs(dimension) {
+            this.bombStore = [];
+            this.dimension = dimension;
+
+            this.getIndex = function(x, y, z) {
+                return x  + y * dimension + z * dimension * dimension;
+            }
+
+            this.addBomb = function(bomb) {
+                var index = this.getIndex(bomb.x, bomb.y, bomb.z);
+                this.bombStore[index] = bomb;
+                bomb.setHeat();
+            }
+
+            this.getBomb = function(x, y, z) {
+                var index = this.getIndex(x, y, z);
+                return this.bombStore[index];
+            }
+
+            this.placeBomb = function(bx, by, bz) {
+                var bomb = this.getBomb(bx, by, bz);
+                if(bomb !== undefined) {
+                    bomb.isBomb = true;
+                    bomb.setHeat();
+                    for(var x = bomb.x -1; x <= bomb.x + 1; x++) {
+                        for(var y = bomb.y -1; y <= bomb.y + 1; y++) {
+                            for(var z = bomb.z -1; z <= bomb.z + 1; z++) {
+                                this.incrementBombCountOn(x, y, z);
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            this.incrementBombCountOn = function(x, y, z) {
+                var bomb = this.getBomb(x, y, z);
+                if(bomb !== undefined) { bomb.incrementBombCount(); }
+                else {
+                    //console.log("x=" + x + ", y=" + y + ", z=" + z + ", i=" + this.getIndex(x, y, z));
+                }
+            }
+        }
+
+        var bombs = new Bombs(4);
+        var d = bombs.dimension;
+
+        for(var x = 0; x < d; x++) {
+            for(var y = 0; y < d; y++) {
+                for(var z = 0; z < d; z++) {
+                    var bomb = new Bomb(x, y, z);
+                    bombs.addBomb(bomb);
+                    bomb = bombs.getBomb(x, y, z);
+                    //scene.add(bomb.mesh);
+                    //console.log("x=" + x + ", y=" + y + ", z=" + z + ", i=" + bombs.getIndex(x, y, z));
+                }
+            }
+        }
+
+        for(var i = 0; i < bombs.bombStore.length; i++) {
+            //console.log(i);
+            scene.add(bombs.bombStore[i].mesh);
+        }
+
+        bombs.placeBomb(1, 1, 1);
+
+        //var trackballControlls = new THREE.TrackballControls(camera);
+
+
+        var marker = new THREE.Object3D();
+        scene.add(marker);
+        marker.add(camera);
+
+        document.addEventListener('keydown', function(event) {
+            var code = event.keyCode;
+            if (code == 37) marker.position.x = marker.position.x-10;
+            if (code == 38) marker.position.z = marker.position.z-10;
+            if (code == 39) marker.position.x = marker.position.x+10;
+            if (code == 40) marker.position.z = marker.position.z+10;
+            if (code == 87) marker.position.y = marker.position.y+10;
+            if (code == 83) marker.position.y = marker.position.y-10;
+            if (code == 72) showHelpDialog();
+            //console.log(code);
+        });
+
+        function showHelpDialog() {
+            var msg = "Use arrow keys to move forward, backward and side-to-side.  Use 'W' to move up and 'S' to move down.";
+            alert(msg);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+    window.onload = init;
+
+</script>
+</body>
+</html>
