@@ -200,9 +200,10 @@
             }
         };
 
-        function bombClicked(mesh, event) {
-            console.log(mesh);
-            console.log(event);
+        function bombClicked(bomb, event) {
+            console.log(bomb);
+            bomb.setColor("red");
+            //bomb.setPosition(0, 0, 0);
         }
 
         var clock = new THREE.Clock();
