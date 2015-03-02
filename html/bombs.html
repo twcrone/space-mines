@@ -33,14 +33,69 @@
     var offset = new THREE.Vector3();
     var objects = [];
 
+    var BombSphere = function() {
+        // Run the Mesh constructor with the given arguments
+        THREE.Mesh.apply(this, arguments);
+
+        this.bombCount = 0;
+        this.isBomb = false;
+
+        this.setPosition = function(x, y, z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.position.set((this.x - 2) * 250, (this.y - 1) * 250, (this.z - 3) * 250);
+        };
+
+        this.setColor = function(color) {
+            switch(color) {
+                case "red":
+                    this.material.color.setRGB(0.8, 0, 0.1);
+                    break;
+                case "orange":
+                    this.material.color.setRGB(0.5, 0.1, 0.2);
+                    break;
+                case "yellow":
+                    this.material.color.setRGB(0.3, 0.1, 0.3);
+                    break;
+                case "green":
+                    this.material.color.setRGB(0.2, 0.2, 0.5);
+                    break;
+                default:
+                    this.material.color.setRGB(0.1, 0.2,0.8);
+            }
+        };
+
+        this.incrementBombCount = function() {
+            this.bombCount++;
+            this.setHeat();
+        };
+
+        this.heats = ["blue", "green", "yellow", "orange", "red"];
+
+        this.setHeat = function() {
+            if(this.isBomb || this.bombCount > 4) {
+                this.setColor("red");
+            }
+            else {
+                this.setColor(this.heats[this.bombCount]);
+            }
+        };
+
+        this.toString = function() {
+            return "x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", isBomb=" + this.isBomb;
+        };
+    };
+
+    // Make MyObject3D have the same methods as Mesh
+    BombSphere.prototype = Object.create(THREE.Mesh.prototype);
+    // Make sure the right constructor gets called
+    BombSphere.prototype.constructor = BombSphere;
+
     // once everything is loaded, we run our Three.js stuff.
     function init() {
 
         var scene = new THREE.Scene();
-
-        plane = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000, 18, 18), new THREE.MeshBasicMaterial());
-        plane.visible = false;
-        scene.add(plane);
 
         // This is what sees the stuff:
         var aspect_ratio = window.innerWidth / window.innerHeight;
@@ -52,59 +107,6 @@
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-
-        function Bomb(x, y, z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.bombCount = 0;
-            this.isBomb = false;
-            this.shape = new THREE.SphereGeometry(50, 20, 15);
-            this.cover = new THREE.MeshBasicMaterial();
-            this.mesh = new THREE.Mesh(this.shape, this.cover);
-            this.mesh.position.set((this.x - 2) * 250, (this.y - 1) * 250, (this.z - 3) * 250);
-
-            this.setColor = function(color) {
-                switch(color) {
-                    case "red":
-                        this.cover.color.setRGB(0.8, 0, 0.1);
-                        break;
-                    case "orange":
-                        this.cover.color.setRGB(0.5, 0.1, 0.2);
-                        break;
-                    case "yellow":
-                        this.cover.color.setRGB(0.3, 0.1, 0.3);
-                        break;
-                    case "green":
-                        this.cover.color.setRGB(0.2, 0.2, 0.5);
-                        break;
-                    default:
-                        this.cover.color.setRGB(0.1, 0.2,0.8);
-                }
-            };
-
-            this.incrementBombCount = function() {
-                this.bombCount++;
-                this.setHeat();
-            };
-
-            this.heats = ["blue", "green", "yellow", "orange", "red"];
-
-            this.setHeat = function() {
-                if(this.isBomb || this.bombCount > 4) {
-                    this.setColor("red");
-                }
-                else {
-                    this.setColor(this.heats[this.bombCount]);
-                }
-            };
-
-            this.toString = function() {
-                return "x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", isBomb=" + this.isBomb;
-            };
-
-            this.setHeat();
-        }
 
         function Bombs(dimension) {
             this.bombStore = [];
@@ -153,7 +155,10 @@
         for(var x = 0; x < d; x++) {
             for(var y = 0; y < d; y++) {
                 for(var z = 0; z < d; z++) {
-                    var bomb = new Bomb(x, y, z);
+                    var shape = new THREE.SphereGeometry(50, 20, 15);
+                    var cover = new THREE.MeshBasicMaterial();
+                    var bomb = new BombSphere(shape, cover);
+                    bomb.setPosition(x, y, z);
                     bombs.addBomb(bomb);
                     bomb = bombs.getBomb(x, y, z);
                 }
@@ -167,8 +172,8 @@
 
         for(var i = 0; i < bombs.bombStore.length; i++) {
             bomb = bombs.bombStore[i];
-            scene.add(bomb.mesh);
-            objects.push(bomb.mesh);
+            scene.add(bomb);
+            objects.push(bomb);
         }
 
         var flyControls = new THREE.FlyControls(camera);
@@ -180,17 +185,6 @@
         flyControls.dragToLook = false;
 
         document.getElementById("WebGL-output").appendChild(renderer.domElement);
-
-//        document.onmousemove = function(event) {
-//            var mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-//            var mouseY = (event.clientY / window.innerHeight) * 2 -1;
-//            var vector = new THREE.Vector3(mouseX, mouseY, 0.5);
-//            vector.unproject();
-//            //projector.unprojectVector(vector, camera);
-//            var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-//
-//            // more
-//        };
 
         document.onmousedown = function(event) {
             var mouseX = (event.clientX / window.innerWidth) * 2 - 1;
