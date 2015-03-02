@@ -32,11 +32,13 @@
     var projector = new THREE.Projector();
     var offset = new THREE.Vector3();
     var objects = [];
+    var bombs = [];
+    var duds = [];
 
     function randomLocation(dimension) {
-        var x = Math.floor((Math.random() * dimension) + 1);
-        var y = Math.floor((Math.random() * dimension) + 1);
-        var z = Math.floor((Math.random() * dimension) + 1);
+        var x = Math.floor(Math.random() * dimension);
+        var y = Math.floor(Math.random() * dimension);
+        var z = Math.floor(Math.random() * dimension);
         return {x: x, y: y, z: z};
     }
 
@@ -181,15 +183,29 @@
             }
         }
 
-        for (var i = 0; i < d * 2; i++) {
+        for (var i = 0; i < d * 2;) {
             var p = randomLocation(d);
-            bombs.placeBomb(p.x, p.y, p.z);
+            var sphere = bombs.getBomb(p.x, p.y, p.z);
+            if(!sphere.isBomb) {
+                bombs.placeBomb(p.x, p.y, p.z);
+                i++;
+            }
         }
 
         for(var i = 0; i < bombs.bombStore.length; i++) {
             bomb = bombs.bombStore[i];
+            if(bomb.isDud()) {
+                duds.push(bomb);
+            }
             scene.add(bomb);
             objects.push(bomb);
+        }
+
+        var dudCount = duds.length;
+        console.log(dudCount + " duds.");
+
+        if(dudCount == 0) {
+            alert("No duds.");
         }
 
         var flyControls = new THREE.FlyControls(camera);
@@ -227,8 +243,24 @@
             else if(bomb.isDud()) {
                 bomb.material.opacity = 0.8;
                 bomb.material.color.setRGB(0.5, 0.5, 0.5);
+                bomb.isExposedDud = true;
+                if(allDudsExposed()) {
+                    alert("You win!!!");
+                }
             }
         }
+
+        function allDudsExposed() {
+            var count = 0;
+            for(var i = 0; i < duds.length; i++) {
+                if(duds[i].isExposedDud == undefined) {
+                    count++;
+                }
+            }
+            console.log(count + " duds left to expose");
+            return count == 0;
+        }
+
 
         var clock = new THREE.Clock();
 
