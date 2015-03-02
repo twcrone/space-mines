@@ -7,7 +7,7 @@
     <script type="text/javascript" src="../libs/three.js"></script>
     <script type="text/javascript" src="../libs/stats.js"></script>
     <script type="text/javascript" src="../libs/FlyControls.js"></script>
-    <script type="text/javascript" src="../libs/jquery-1.9.0.js"></script>
+    <script type="text/javascript" src="../libs/Projector.js"></script>
     <style>
         body {
             /* set margin to 0 and overflow to hidden, to go fullscreen */
@@ -27,10 +27,20 @@
 <!-- Javascript code that runs our Three.js examples -->
 <script type="text/javascript">
 
+    var plane;
+    var selectedObject;
+    var projector = new THREE.Projector();
+    var offset = new THREE.Vector3();
+    var objects = [];
+
     // once everything is loaded, we run our Three.js stuff.
     function init() {
 
         var scene = new THREE.Scene();
+
+        plane = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000, 18, 18), new THREE.MeshBasicMaterial());
+        plane.visible = false;
+        scene.add(plane);
 
         // This is what sees the stuff:
         var aspect_ratio = window.innerWidth / window.innerHeight;
@@ -158,6 +168,7 @@
         for(var i = 0; i < bombs.bombStore.length; i++) {
             bomb = bombs.bombStore[i];
             scene.add(bomb.mesh);
+            objects.push(bomb.mesh);
         }
 
         var flyControls = new THREE.FlyControls(camera);
@@ -169,6 +180,36 @@
         flyControls.dragToLook = false;
 
         document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+//        document.onmousemove = function(event) {
+//            var mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+//            var mouseY = (event.clientY / window.innerHeight) * 2 -1;
+//            var vector = new THREE.Vector3(mouseX, mouseY, 0.5);
+//            vector.unproject();
+//            //projector.unprojectVector(vector, camera);
+//            var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+//
+//            // more
+//        };
+
+        document.onmousedown = function(event) {
+            var mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            var mouseY = (event.clientY / window.innerHeight) * 2 - 1;
+            var vector = new THREE.Vector3(mouseX, mouseY, 0.5);
+            vector.unproject(camera);
+            var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+            var intersects = raycaster.intersectObjects(objects);
+
+            if (intersects.length > 0) {
+                selectedObject = intersects[0].object;
+                bombClicked(selectedObject, event);
+            }
+        };
+
+        function bombClicked(mesh, event) {
+            console.log(mesh);
+            console.log(event);
+        }
 
         var clock = new THREE.Clock();
 
