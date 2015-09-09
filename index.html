@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Example 01.04 - Materials, light and animation</title>
+    <script type="text/javascript" src="libs/three.js"></script>
+    <script type="text/javascript" src="libs/stats.js"></script>
+    <script type="text/javascript" src="libs/FlyControls.js"></script>
+    <script type="text/javascript" src="libs/Projector.js"></script>
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<div id="Stats-output">
+</div>
+<!-- Div which will hold the Output -->
+<div id="WebGL-output">
+</div>
+
+<!-- Javascript code that runs our Three.js examples -->
+<script type="text/javascript">
+
+    var plane;
+    var selectedObject;
+    var projector = new THREE.Projector();
+    var offset = new THREE.Vector3();
+    var objects = [];
+    var bombs = [];
+    var duds = [];
+
+    function randomLocation(dimension) {
+        var x = Math.floor(Math.random() * dimension);
+        var y = Math.floor(Math.random() * dimension);
+        var z = Math.floor(Math.random() * dimension);
+        return {x: x, y: y, z: z};
+    }
+
+    var BombSphere = function() {
+        // Run the Mesh constructor with the given arguments
+        THREE.Mesh.apply(this, arguments);
+
+        this.material.transparent = true;
+        this.material.opacity = 0.9;
+        this.bombCount = 0;
+        this.isBomb = false;
+
+        this.setPosition = function(x, y, z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.position.set((this.x - 2) * 250, (this.y - 1) * 250, (this.z - 3) * 250);
+        };
+
+        this.setColor = function(color) {
+            switch(color) {
+                case "red":
+                    this.material.color.setRGB(1, 0, 0);
+                    this.material.opacity = 1;
+                    break;
+                case "orange":
+                    this.material.color.setRGB(0.5, 0.1, 0.2);
+                    break;
+                case "yellow":
+                    this.material.color.setRGB(0.3, 0.1, 0.3);
+                    break;
+                case "green":
+                    this.material.color.setRGB(0.2, 0.2, 0.5);
+                    break;
+                default:
+                    this.material.color.setRGB(0.1, 0.2,0.8);
+            }
+        };
+
+        this.incrementBombCount = function() {
+            this.bombCount++;
+            this.setHeat();
+        };
+
+        this.heats = ["blue", "green", "yellow", "orange", "red"];
+
+        this.setHeat = function() {
+            if(this.isBomb || this.bombCount > 3) {
+                this.setColor("red");
+            }
+            else {
+                this.setColor(this.heats[this.bombCount]);
+            }
+        };
+
+        this.toString = function() {
+            return "x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", isBomb=" + this.isBomb;
+        };
+
+        this.isDud = function() {
+            return this.bombCount > 3 && this.isBomb == false;
+        };
+    };
+
+    // Make MyObject3D have the same methods as Mesh
+    BombSphere.prototype = Object.create(THREE.Mesh.prototype);
+    // Make sure the right constructor gets called
+    BombSphere.prototype.constructor = BombSphere;
+
+    // once everything is loaded, we run our Three.js stuff.
+    function init() {
+
+        var scene = new THREE.Scene();
+
+        // This is what sees the stuff:
+        var aspect_ratio = window.innerWidth / window.innerHeight;
+        var camera = new THREE.PerspectiveCamera(75, aspect_ratio, 1, 10000);
+        camera.position.z = 500;
+        scene.add(camera);
+
+        // This will draw what the camera sees onto the screen:
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        function Bombs(dimension) {
+            this.bombStore = [];
+            this.dimension = dimension;
+
+            this.getIndex = function(x, y, z) {
+                return x  + y * dimension + z * dimension * dimension;
+            };
+
+            this.addBomb = function(bomb) {
+                var index = this.getIndex(bomb.x, bomb.y, bomb.z);
+                this.bombStore[index] = bomb;
+                bomb.setHeat();
+            };
+
+            this.getBomb = function(x, y, z) {
+                var index = this.getIndex(x, y, z);
+                return this.bombStore[index];
+            };
+
+            this.placeBomb = function(bx, by, bz) {
+                var bomb = this.getBomb(bx, by, bz);
+                if(bomb !== undefined) {
+                    bomb.isBomb = true;
+                    bomb.setHeat();
+                    for(var x = bomb.x -1; x <= bomb.x + 1; x++) {
+                        for(var y = bomb.y -1; y <= bomb.y + 1; y++) {
+                            for(var z = bomb.z -1; z <= bomb.z + 1; z++) {
+                                this.incrementBombCountOn(x, y, z);
+                            }
+                        }
+                    }
+
+                }
+            };
+
+            this.incrementBombCountOn = function(x, y, z) {
+                var bomb = this.getBomb(x, y, z);
+                if(bomb !== undefined) { bomb.incrementBombCount(); }
+            };
+        }
+
+
+
+        var d = 6;
+        var bombs = new Bombs(d);
+
+        for(var x = 0; x < d; x++) {
+            for(var y = 0; y < d; y++) {
+                for(var z = 0; z < d; z++) {
+                    var shape = new THREE.SphereGeometry(50, 20, 15);
+                    var cover = new THREE.MeshBasicMaterial();
+                    var bomb = new BombSphere(shape, cover);
+                    bomb.setPosition(x, y, z);
+                    bombs.addBomb(bomb);
+                    bomb = bombs.getBomb(x, y, z);
+                }
+            }
+        }
+
+        for (var i = 0; i < d * 2;) {
+            var p = randomLocation(d);
+            var sphere = bombs.getBomb(p.x, p.y, p.z);
+            if(!sphere.isBomb) {
+                bombs.placeBomb(p.x, p.y, p.z);
+                i++;
+            }
+        }
+
+        for(var i = 0; i < bombs.bombStore.length; i++) {
+            bomb = bombs.bombStore[i];
+            if(bomb.isDud()) {
+                duds.push(bomb);
+            }
+            scene.add(bomb);
+            objects.push(bomb);
+        }
+
+        var dudCount = duds.length;
+        console.log(dudCount + " duds.");
+
+        if(dudCount == 0) {
+            alert("No duds.");
+        }
+
+        var flyControls = new THREE.FlyControls(camera);
+
+        flyControls.movementSpeed = 200;
+        flyControls.domElement = document.querySelector("#WebGL-output");
+        flyControls.rollSpeed = Math.PI / 24;
+        flyControls.autoForward = false;
+        flyControls.dragToLook = true;
+
+        document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+        document.onmousedown = function(event) {
+            var mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            var mouseY = (event.clientY / window.innerHeight) * 2 - 1;
+            var vector = new THREE.Vector3(mouseX, mouseY, 0.5);
+            vector.unproject(camera);
+            var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+            var intersects = raycaster.intersectObjects(objects);
+
+            for (var i = 0; i < intersects.length; i++) {
+                selectedObject = intersects[0].object;
+                if(selectedObject.isBomb || selectedObject.isDud()) {
+                    bombClicked(selectedObject);
+                    break;
+                }
+            }
+        };
+
+        function bombClicked(bomb) {
+            console.log(bomb);
+            if(bomb.isBomb) {
+                alert("You lose!!!");
+            }
+            else if(bomb.isDud()) {
+                bomb.material.opacity = 0.8;
+                bomb.material.color.setRGB(0.5, 0.5, 0.5);
+                bomb.isExposedDud = true;
+                if(allDudsExposed()) {
+                    alert("You win!!!");
+                }
+            }
+        }
+
+        function allDudsExposed() {
+            var count = 0;
+            for(var i = 0; i < duds.length; i++) {
+                if(duds[i].isExposedDud == undefined) {
+                    count++;
+                }
+            }
+            console.log(count + " duds left to expose");
+            return count == 0;
+        }
+
+
+        var clock = new THREE.Clock();
+
+        render();
+
+        function render() {
+            var delta = clock.getDelta();
+            flyControls.update(delta);
+            renderer.clear();
+            // render using requestAnimationFrame
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+    }
+    window.onload = init;
+
+</script>
+</body>
+</html>
