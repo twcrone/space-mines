@@ -4,6 +4,7 @@ var flyControls;
 var renderer;
 var minefield;
 var dimension = 5;
+var mineMeshes = [];
 
 function createSpotlight() {
     var spotlight = new THREE.SpotLight(0xffffff);
@@ -56,7 +57,9 @@ function renderScene() {
 function addMinefieldTo(scene) {
     minefield = Mine.createMinefield(dimension);
     for(var i = 0; i < minefield.size; ++i) {
-        scene.add(minefield.mines[i].mesh);
+        var mesh = minefield.mines[i].mesh;
+        scene.add(mesh);
+        mineMeshes.push(mesh);
     }
 }
 
@@ -75,6 +78,27 @@ function init() {
     scene.add(camera);
     scene.add(spotlight);
 
+    document.onmousedown = function(event) {
+        var vector = new THREE.Vector3();
+
+        vector.set(
+            ( event.clientX / window.innerWidth ) * 2 - 1,
+            -( event.clientY / window.innerHeight ) * 2 + 1,
+            0.5);
+
+        vector.unproject(camera);
+
+        var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+        var intersects = raycaster.intersectObjects(mineMeshes);
+        var o = intersects[0].object;
+        if(o) {
+            scene.remove(o);
+
+        }
+        else {
+            console.log("No object intersected");
+        }
+    };
 
     document.getElementById("WebGL-output")
         .appendChild(renderer.domElement);

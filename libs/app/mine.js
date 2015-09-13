@@ -4,7 +4,7 @@ Mine.create = function (props) {
     var geometry = new THREE.SphereGeometry(Mine.radius);
     var material = new THREE.MeshLambertMaterial({color: 0xD3D3D3});
     var mesh = new THREE.Mesh(geometry, material);
-    var mine = {mesh: mesh};
+    var mine = {mesh: mesh, isMine: false, mineCount: 0};
 
     mesh.position.x = props.x;
     mesh.position.y = props.y;
