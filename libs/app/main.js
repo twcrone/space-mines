@@ -7,14 +7,14 @@ var dimension = 5;
 
 function createSpotlight() {
     var spotlight = new THREE.SpotLight(0xffffff);
-    spotlight.position.set(0, 0, 100);
+    spotlight.position.set(10, 10, 100);
     spotlight.castShadow = true;
     return spotlight;
 }
 
 function createCameraLookingAt(position) {
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.set(dimension * 4, dimension * 4, 100);
+    camera.position.set(dimension * 5, dimension * 5, 100);
     camera.lookAt(position);
 
     flyControls = new THREE.FlyControls(camera);
@@ -53,20 +53,28 @@ function renderScene() {
     renderer.render(scene, camera);
 }
 
-function init() {
-
-    scene = new THREE.Scene();
-    camera = createCameraLookingAt(scene.position);
-    renderer = createRenderer();
-    var spotlight = createSpotlight();
+function addMinefieldTo(scene) {
     minefield = Mine.createMinefield(dimension);
-
-    scene.add(camera);
-    scene.add(spotlight);
-
     for(var i = 0; i < minefield.size; ++i) {
         scene.add(minefield.mines[i].mesh);
     }
+}
+
+function init() {
+
+    scene = new THREE.Scene();
+    addMinefieldTo(scene);
+    camera = createCameraLookingAt(Mine.getCenter(minefield));
+    renderer = createRenderer();
+
+    var spotlight = createSpotlight();
+    var ambientLight = new THREE.AmbientLight(0x383838);
+
+
+    scene.add(ambientLight);
+    scene.add(camera);
+    scene.add(spotlight);
+
 
     document.getElementById("WebGL-output")
         .appendChild(renderer.domElement);

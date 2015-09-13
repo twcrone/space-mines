@@ -36,3 +36,8 @@ Mine.createMinefield = function(size) {
 Mine.getIndex = function(x, y, z, size) {
     return x + y * size + z * size * size;
 };
+
+Mine.getCenter = function(minefield) {
+    var index = Math.floor(minefield.mines.length / 2);
+    return minefield.mines[index].mesh.position;
+};
