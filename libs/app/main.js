@@ -4,16 +4,14 @@ var renderer;
 
 function createSpotlight() {
     var spotlight = new THREE.SpotLight(0xffffff);
-    spotlight.position.set(-10, 2, 30);
+    spotlight.position.set(0, 0, 100);
     spotlight.castShadow = true;
     return spotlight;
 }
 
 function createCameraLookingAt(position) {
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.x = -10;
-    camera.position.y = 0;
-    camera.position.z = 30;
+    camera.position.set(0, 5, 100);
     camera.lookAt(position);
 
     return camera;
@@ -45,11 +43,14 @@ function init() {
     camera = createCameraLookingAt(scene.position);
     renderer = createRenderer();
     var spotlight = createSpotlight();
-    var mine = Mine.create({x: 0, y: 0});
+    var minefield = Mine.createMinefield(3);
 
     scene.add(camera);
     scene.add(spotlight);
-    scene.add(mine.mesh);
+
+    for(var i = 0; i < minefield.size; ++i) {
+        scene.add(minefield.mines[i].mesh);
+    }
 
     document.getElementById("WebGL-output")
         .appendChild(renderer.domElement);
