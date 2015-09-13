@@ -1,5 +1,6 @@
 var scene;
 var camera;
+var flyControls;
 var renderer;
 var minefield;
 var dimension = 5;
@@ -16,6 +17,14 @@ function createCameraLookingAt(position) {
     camera.position.set(dimension * 4, dimension * 4, 100);
     camera.lookAt(position);
 
+    flyControls = new THREE.FlyControls(camera);
+
+    flyControls.movementSpeed = 25;
+    flyControls.domElement = document.querySelector("#WebGL-output");
+    flyControls.rollSpeed = Math.PI / 24;
+    flyControls.autoForward = false;
+    flyControls.dragToLook = true;
+
     return camera;
 }
 
@@ -28,7 +37,12 @@ function createRenderer() {
     return renderer;
 }
 
+var clock = new THREE.Clock();
+
 function renderScene() {
+    var delta = clock.getDelta();
+    flyControls.update(delta);
+
     //scene.traverse(function(obj) {
     //    if(obj instanceof THREE.Mesh) {
     //        obj.animate();
