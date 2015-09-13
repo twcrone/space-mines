@@ -49,7 +49,7 @@ function init() {
 
     scene.add(camera);
     scene.add(spotlight);
-    scene.add(mine);
+    scene.add(mine.mesh);
 
     document.getElementById("WebGL-output")
         .appendChild(renderer.domElement);
