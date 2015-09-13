@@ -1,6 +1,8 @@
 var scene;
 var camera;
 var renderer;
+var minefield;
+var dimension = 5;
 
 function createSpotlight() {
     var spotlight = new THREE.SpotLight(0xffffff);
@@ -11,7 +13,7 @@ function createSpotlight() {
 
 function createCameraLookingAt(position) {
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 5, 100);
+    camera.position.set(dimension * 4, dimension * 4, 100);
     camera.lookAt(position);
 
     return camera;
@@ -43,7 +45,7 @@ function init() {
     camera = createCameraLookingAt(scene.position);
     renderer = createRenderer();
     var spotlight = createSpotlight();
-    var minefield = Mine.createMinefield(3);
+    minefield = Mine.createMinefield(dimension);
 
     scene.add(camera);
     scene.add(spotlight);
