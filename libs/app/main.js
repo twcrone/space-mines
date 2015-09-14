@@ -3,8 +3,13 @@ var camera;
 var flyControls;
 var renderer;
 var minefield;
-var dimension = 5;
 var mineMeshes = [];
+var difficulty;
+
+function get(name){
+    if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+        return decodeURIComponent(name[1]);
+}
 
 function createSpotlight() {
     var spotlight = new THREE.SpotLight(0xffffff);
@@ -15,7 +20,7 @@ function createSpotlight() {
 
 function createCameraLookingAt(position) {
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.set(dimension * 5, dimension * 5, 100);
+    camera.position.set(25, 25, 100);
     camera.lookAt(position);
 
     flyControls = new THREE.FlyControls(camera);
@@ -55,7 +60,7 @@ function renderScene() {
 }
 
 function addMinefieldTo(scene) {
-    minefield = Mine.createMinefield(dimension);
+    minefield = Mine.createMinefield(difficulty);
     for(var i = 0; i < minefield.size; ++i) {
         var mesh = minefield.mines[i].mesh;
         scene.add(mesh);
@@ -64,6 +69,8 @@ function addMinefieldTo(scene) {
 }
 
 function init() {
+
+    difficulty = get("difficulty");
 
     scene = new THREE.Scene();
     addMinefieldTo(scene);

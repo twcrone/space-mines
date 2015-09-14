@@ -14,7 +14,9 @@ Mine.create = function (props) {
     return mine;
 };
 
-Mine.createMinefield = function(size) {
+Mine.createMinefield = function(difficulty) {
+    var size = Mine.getSize(difficulty);
+    var mineCount = Mine.getMineCount(difficulty);
     var mines = [];
     var minefield = {mines: mines, size: size * size * size, width: size};
 
@@ -31,9 +33,33 @@ Mine.createMinefield = function(size) {
         }
     }
 
-    Mine.addActiveMinesRandomly(minefield, minefield.width);
+    Mine.addActiveMinesRandomly(minefield, mineCount);
 
     return minefield;
+};
+
+Mine.getSize = function(difficulty) {
+    if(difficulty == "easy"  || difficulty == "average") {
+        return 4;
+    }
+    else {
+        return 5;
+    }
+};
+
+Mine.getMineCount = function(difficulty) {
+    if(difficulty == "easy") {
+        return 2;
+    }
+    else if(difficulty == "average") {
+        return 3;
+    }
+    else if(difficulty == "hard") {
+        return 4;
+    }
+    else {
+        return 5;
+    }
 };
 
 Mine.addActiveMinesRandomly = function(minefield, count) {
@@ -219,7 +245,7 @@ Mine.revealAll = function(minefield) {
 
 Mine.reveal = function(mine) {
     if(mine.isMine) {
-        mine.mesh.material = new THREE.MeshBasicMaterial({color: 0xffffff});
+        mine.mesh.material = new THREE.MeshBasicMaterial({color: 0xFF0000});
     }
     else if(mine.mineCount == 0) {
         mine.mesh.visible = false;
@@ -258,7 +284,36 @@ Mine.mark = function(minefield, mineMesh) {
     }
     else {
         mine.marked = true;
-        mine.mesh.material = new THREE.MeshBasicMaterial({color: 0xFF0000});
+        mine.mesh.material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+    }
+
+    if(Mine.allActiveMinesMarked(minefield)) {
+        Mine.win(minefield);
+    }
+};
+
+Mine.allActiveMinesMarked = function(minefield) {
+    var mine;
+    for(var i = 0; i < minefield.mines.length; ++i) {
+        mine = minefield.mines[i];
+        if(mine.isMine && mine.marked != true) {
+            return false;
+        }
+        else if(mine.isMine == false && mine.marked) {
+            return false;
+        }
+    }
+    return true;
+};
+
+Mine.win = function(minefield) {
+    var mines = minefield.mines;
+    var mine;
+    for(var i = 0; i < mines.length; ++i) {
+        mine = mines[i];
+        if(mine.isMine == false) {
+            mine.mesh.visible = false;
+        }
     }
 };
 
