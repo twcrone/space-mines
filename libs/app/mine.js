@@ -72,7 +72,10 @@ Mine.addActiveMineRandomly = function(minefield) {
     var x = Math.floor(Math.random() * minefield.width);
     var y = Math.floor(Math.random() * minefield.width);
     var z = Math.floor(Math.random() * minefield.width);
-    Mine.addActiveMine(minefield, x, y, z);
+    var added = Mine.addActiveMine(minefield, x, y, z);
+    if(!added) {
+        Mine.addActiveMineRandomly(minefield);
+    }
 };
 
 Mine.addActiveMine = function(minefield, x, y, z) {
@@ -80,7 +83,9 @@ Mine.addActiveMine = function(minefield, x, y, z) {
     if(activeMine.isMine == false) {
         activeMine.isMine = true;
         Mine.incrementNeighborMineCount(minefield, activeMine);
+        return true;
     }
+    return false;
 };
 
 Mine.getIndex = function(x, y, z, width) {
