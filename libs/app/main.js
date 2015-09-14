@@ -103,7 +103,12 @@ function onMouseDown(event) {
     for(var i = 0; i < intersects.length; ++i) {
         selected = intersects[i].object;
         if(selected.visible) {
-            Mine.select(minefield, selected);
+            if(event.ctrlKey || event.button != 0) {
+                Mine.mark(minefield, selected);
+            }
+            else {
+                Mine.select(minefield, selected);
+            }
             break;
         }
     }

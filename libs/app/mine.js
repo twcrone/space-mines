@@ -239,4 +239,26 @@ Mine.reveal = function(mine) {
     else {
         mine.mesh.material = new THREE.MeshLambertMaterial({color: 0xFF0000});
     }
+    mine.revealed = true;
 };
+
+Mine.mark = function(minefield, mineMesh) {
+    var mine = Mine.findByMesh(minefield, mineMesh);
+    if(mine == undefined) {
+        console.log("Couldn't find " + mineMesh);
+        return;
+    }
+    if(mine.revealed) {
+        return;
+    }
+
+    if(mine.marked) {
+        mine.marked = false;
+        mine.mesh.material = new THREE.MeshLambertMaterial({color: 0xD3D3D3});
+    }
+    else {
+        mine.marked = true;
+        mine.mesh.material = new THREE.MeshBasicMaterial({color: 0xFF0000});
+    }
+};
+
