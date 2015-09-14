@@ -75,10 +75,18 @@ Mine.findByMesh = function(minefield, mineMesh) {
 Mine.select = function(minefield, mineMesh) {
     var mine = Mine.findByMesh(minefield, mineMesh);
     if(mine == undefined) {
-        console.log("Mine not found");
+        console.log("Couldn't fined " + mineMesh);
+    }
+
+    if(mine.isMine) {
+        mine.mesh.material = new THREE.MeshBasicMaterial({color: 0xffffff});
+    }
+    else if(mine.mineCount == 0) {
+        mine.mesh.visible = false;
+        Mine.checkNeighbors(minefield, mine);
     }
     else {
-        Mine.checkNeighbors(minefield, mine);
+        Mine.revealIfNotMine(minefield, mine.x, mine.y, mine.z);
     }
 };
 
