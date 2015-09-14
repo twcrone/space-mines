@@ -3,7 +3,7 @@ var camera;
 var flyControls;
 var renderer;
 var minefield;
-var dimension = 5;
+var dimension = 6;
 var mineMeshes = [];
 
 function createSpotlight() {
