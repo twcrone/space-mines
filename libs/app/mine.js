@@ -73,44 +73,48 @@ Mine.select = function(minefield, mineMesh) {
         console.log("Mine not found");
     }
     else {
-        //
-        Mine.revealIfNotMine(minefield, mine.x -1, mine.y + 1, mine.z + 1);
-        Mine.revealIfNotMine(minefield, mine.x, mine.y + 1, mine.z + 1);
-        Mine.revealIfNotMine(minefield, mine.x +1, mine.y + 1, mine.z + 1);
-
-        Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z + 1);
-        Mine.revealIfNotMine(minefield, mine.x, mine.y, mine.z + 1);
-        Mine.revealIfNotMine(minefield, mine.x +1, mine.y, mine.z + 1);
-
-        Mine.revealIfNotMine(minefield, mine.x -1, mine.y - 1, mine.z + 1);
-        Mine.revealIfNotMine(minefield, mine.x, mine.y - 1, mine.z + 1);
-        Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z + 1);
-
-        //
-        Mine.revealIfNotMine(minefield, mine.x -1, mine.y + 1, mine.z);
-        Mine.revealIfNotMine(minefield, mine.x, mine.y + 1, mine.z);
-        Mine.revealIfNotMine(minefield, mine.x +1, mine.y + 1, mine.z);
-
-        Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z);
-        Mine.revealIfNotMine(minefield, mine.x +1, mine.y, mine.z);
-
-        Mine.revealIfNotMine(minefield, mine.x -1, mine.y - 1, mine.z);
-        Mine.revealIfNotMine(minefield, mine.x, mine.y - 1, mine.z);
-        Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z);
-
-        //
-        Mine.revealIfNotMine(minefield, mine.x -1, mine.y + 1, mine.z - 1);
-        Mine.revealIfNotMine(minefield, mine.x, mine.y + 1, mine.z - 1);
-        Mine.revealIfNotMine(minefield, mine.x +1, mine.y + 1, mine.z - 1);
-
-        Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z - 1);
-        Mine.revealIfNotMine(minefield, mine.x, mine.y, mine.z - 1);
-        Mine.revealIfNotMine(minefield, mine.x +1, mine.y, mine.z - 1);
-
-        Mine.revealIfNotMine(minefield, mine.x -1, mine.y - 1, mine.z - 1);
-        Mine.revealIfNotMine(minefield, mine.x, mine.y - 1, mine.z - 1);
-        Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z - 1);
+        Mine.checkNeighbors(minefield, mine);
     }
+};
+
+Mine.checkNeighbors = function(minefield, mine) {
+    //
+    Mine.revealIfNotMine(minefield, mine.x -1, mine.y + 1, mine.z + 1);
+    Mine.revealIfNotMine(minefield, mine.x, mine.y + 1, mine.z + 1);
+    Mine.revealIfNotMine(minefield, mine.x +1, mine.y + 1, mine.z + 1);
+
+    Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z + 1);
+    Mine.revealIfNotMine(minefield, mine.x, mine.y, mine.z + 1);
+    Mine.revealIfNotMine(minefield, mine.x +1, mine.y, mine.z + 1);
+
+    Mine.revealIfNotMine(minefield, mine.x -1, mine.y - 1, mine.z + 1);
+    Mine.revealIfNotMine(minefield, mine.x, mine.y - 1, mine.z + 1);
+    Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z + 1);
+
+    //
+    Mine.revealIfNotMine(minefield, mine.x -1, mine.y + 1, mine.z);
+    Mine.revealIfNotMine(minefield, mine.x, mine.y + 1, mine.z);
+    Mine.revealIfNotMine(minefield, mine.x +1, mine.y + 1, mine.z);
+
+    Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z);
+    Mine.revealIfNotMine(minefield, mine.x +1, mine.y, mine.z);
+
+    Mine.revealIfNotMine(minefield, mine.x -1, mine.y - 1, mine.z);
+    Mine.revealIfNotMine(minefield, mine.x, mine.y - 1, mine.z);
+    Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z);
+
+    //
+    Mine.revealIfNotMine(minefield, mine.x -1, mine.y + 1, mine.z - 1);
+    Mine.revealIfNotMine(minefield, mine.x, mine.y + 1, mine.z - 1);
+    Mine.revealIfNotMine(minefield, mine.x +1, mine.y + 1, mine.z - 1);
+
+    Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z - 1);
+    Mine.revealIfNotMine(minefield, mine.x, mine.y, mine.z - 1);
+    Mine.revealIfNotMine(minefield, mine.x +1, mine.y, mine.z - 1);
+
+    Mine.revealIfNotMine(minefield, mine.x -1, mine.y - 1, mine.z - 1);
+    Mine.revealIfNotMine(minefield, mine.x, mine.y - 1, mine.z - 1);
+    Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z - 1);
 };
 
 Mine.revealIfNotMine = function(minefield, x, y, z) {
@@ -118,7 +122,8 @@ Mine.revealIfNotMine = function(minefield, x, y, z) {
 
     if(mine == null) return;
 
-    if(mine.mineCount == 0) {
+    if(mine.mineCount == 0 && mine.mesh.visible == true) {
         mine.mesh.visible = false;
+        Mine.checkNeighbors(minefield, mine);
     }
 };
