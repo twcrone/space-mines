@@ -18,7 +18,7 @@ Mine.createMinefield = function(difficulty) {
     var size = Mine.getSize(difficulty);
     var mineCount = Mine.getMineCount(difficulty);
     var mines = [];
-    var minefield = {mines: mines, size: size * size * size, width: size};
+    var minefield = {mines: mines, size: size * size * size, width: size, gameOver: false};
 
     for(var x = 0; x < size; ++x) {
         for(var y = 0; y < size; ++y) {
@@ -118,13 +118,19 @@ Mine.findByMesh = function(minefield, mineMesh) {
 };
 
 Mine.select = function(minefield, mineMesh) {
+    if(minefield.gameOver) return;
+
     var mine = Mine.findByMesh(minefield, mineMesh);
     if(mine == undefined) {
         console.log("Couldn't fined " + mineMesh);
     }
+    if(mine.marked) {
+        return;  // must be unmarked first
+    }
 
     if(mine.isMine) {
         Mine.revealAll(minefield);
+        minefield.gameOver = true;
     }
     else if(mine.mineCount == 0) {
         mine.mesh.visible = false;
@@ -269,6 +275,8 @@ Mine.reveal = function(mine) {
 };
 
 Mine.mark = function(minefield, mineMesh) {
+    if(minefield.gameOver) return;
+
     var mine = Mine.findByMesh(minefield, mineMesh);
     if(mine == undefined) {
         console.log("Couldn't find " + mineMesh);
@@ -315,5 +323,6 @@ Mine.win = function(minefield) {
             mine.mesh.visible = false;
         }
     }
+    minefield.gameOver = true;
 };
 
