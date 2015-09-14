@@ -31,12 +31,18 @@ Mine.createMinefield = function(size) {
         }
     }
 
-    var activeMine = Mine.getMine(minefield, 3, 3, 3);
-    activeMine.isMine = true;
-    Mine.incrementNeighborMineCount(minefield, activeMine);
+    Mine.addActiveMine(minefield, 3, 3, 3);
+    Mine.addActiveMine(minefield, 3, 2, 3);
+    Mine.addActiveMine(minefield, 3, 4, 4);
 
     return minefield;
 };
+
+Mine.addActiveMine = function(minefield, x, y, z) {
+    var activeMine = Mine.getMine(minefield, x, y, z);
+    activeMine.isMine = true;
+    Mine.incrementNeighborMineCount(minefield, activeMine);
+}
 
 Mine.getIndex = function(x, y, z, width) {
     if(x < 0 || y < 0 || z < 0) {
@@ -130,44 +136,51 @@ Mine.checkNeighbors = function(minefield, mine) {
     Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z - 1);
 };
 
+Mine.incrementMineCount = function(minefield, x, y, z) {
+    var mine = Mine.getMine(minefield, x, y, z);
+    if(mine != null) {
+        mine.mineCount++;
+    }
+}
+
 Mine.incrementNeighborMineCount = function(minefield, mine) {
-//
-    Mine.getMine(minefield, mine.x -1, mine.y + 1, mine.z + 1).mineCount++;
-    Mine.getMine(minefield, mine.x, mine.y + 1, mine.z + 1).mineCount++;
-    Mine.getMine(minefield, mine.x +1, mine.y + 1, mine.z + 1).mineCount++;
+    //
+    Mine.incrementMineCount(minefield, mine.x -1, mine.y + 1, mine.z + 1);
+    Mine.incrementMineCount(minefield, mine.x, mine.y + 1, mine.z + 1);
+    Mine.incrementMineCount(minefield, mine.x +1, mine.y + 1, mine.z + 1);
 
-    Mine.getMine(minefield, mine.x -1, mine.y, mine.z + 1).mineCount++;
-    Mine.getMine(minefield, mine.x, mine.y, mine.z + 1).mineCount++;
-    Mine.getMine(minefield, mine.x +1, mine.y, mine.z + 1).mineCount++;
+    Mine.incrementMineCount(minefield, mine.x -1, mine.y, mine.z + 1);
+    Mine.incrementMineCount(minefield, mine.x, mine.y, mine.z + 1);
+    Mine.incrementMineCount(minefield, mine.x +1, mine.y, mine.z + 1);
 
-    Mine.getMine(minefield, mine.x -1, mine.y - 1, mine.z + 1).mineCount++;
-    Mine.getMine(minefield, mine.x, mine.y - 1, mine.z + 1).mineCount++;
-    Mine.getMine(minefield, mine.x +1, mine.y - 1, mine.z + 1).mineCount++;
+    Mine.incrementMineCount(minefield, mine.x -1, mine.y - 1, mine.z + 1);
+    Mine.incrementMineCount(minefield, mine.x, mine.y - 1, mine.z + 1);
+    Mine.incrementMineCount(minefield, mine.x +1, mine.y - 1, mine.z + 1);
 
     //
-    Mine.getMine(minefield, mine.x -1, mine.y + 1, mine.z).mineCount++;
-    Mine.getMine(minefield, mine.x, mine.y + 1, mine.z).mineCount++;
-    Mine.getMine(minefield, mine.x +1, mine.y + 1, mine.z).mineCount++;
+    Mine.incrementMineCount(minefield, mine.x -1, mine.y + 1, mine.z);
+    Mine.incrementMineCount(minefield, mine.x, mine.y + 1, mine.z);
+    Mine.incrementMineCount(minefield, mine.x +1, mine.y + 1, mine.z);
 
-    Mine.getMine(minefield, mine.x -1, mine.y, mine.z).mineCount++;
-    Mine.getMine(minefield, mine.x +1, mine.y, mine.z).mineCount++;
+    Mine.incrementMineCount(minefield, mine.x -1, mine.y, mine.z);
+    Mine.incrementMineCount(minefield, mine.x +1, mine.y, mine.z);
 
-    Mine.getMine(minefield, mine.x -1, mine.y - 1, mine.z).mineCount++;
-    Mine.getMine(minefield, mine.x, mine.y - 1, mine.z).mineCount++;
-    Mine.getMine(minefield, mine.x +1, mine.y - 1, mine.z).mineCount++;
+    Mine.incrementMineCount(minefield, mine.x -1, mine.y - 1, mine.z);
+    Mine.incrementMineCount(minefield, mine.x, mine.y - 1, mine.z);
+    Mine.incrementMineCount(minefield, mine.x +1, mine.y - 1, mine.z);
 
     //
-    Mine.getMine(minefield, mine.x -1, mine.y + 1, mine.z - 1).mineCount++;
-    Mine.getMine(minefield, mine.x, mine.y + 1, mine.z - 1).mineCount++;
-    Mine.getMine(minefield, mine.x +1, mine.y + 1, mine.z - 1).mineCount++;
+    Mine.incrementMineCount(minefield, mine.x -1, mine.y + 1, mine.z - 1);
+    Mine.incrementMineCount(minefield, mine.x, mine.y + 1, mine.z - 1);
+    Mine.incrementMineCount(minefield, mine.x +1, mine.y + 1, mine.z - 1);
 
-    Mine.getMine(minefield, mine.x -1, mine.y, mine.z - 1).mineCount++;
-    Mine.getMine(minefield, mine.x, mine.y, mine.z - 1).mineCount++;
-    Mine.getMine(minefield, mine.x +1, mine.y, mine.z - 1).mineCount++;
+    Mine.incrementMineCount(minefield, mine.x -1, mine.y, mine.z - 1);
+    Mine.incrementMineCount(minefield, mine.x, mine.y, mine.z - 1);
+    Mine.incrementMineCount(minefield, mine.x +1, mine.y, mine.z - 1);
 
-    Mine.getMine(minefield, mine.x -1, mine.y - 1, mine.z - 1).mineCount++;
-    Mine.getMine(minefield, mine.x, mine.y - 1, mine.z - 1).mineCount++;
-    Mine.getMine(minefield, mine.x +1, mine.y - 1, mine.z - 1).mineCount++;
+    Mine.incrementMineCount(minefield, mine.x -1, mine.y - 1, mine.z - 1);
+    Mine.incrementMineCount(minefield, mine.x, mine.y - 1, mine.z - 1);
+    Mine.incrementMineCount(minefield, mine.x +1, mine.y - 1, mine.z - 1);
 }
 
 Mine.revealIfNotMine = function(minefield, x, y, z) {
@@ -181,5 +194,17 @@ Mine.revealIfNotMine = function(minefield, x, y, z) {
     }
     else if(mine.mineCount == 1) {
         mine.mesh.material = new THREE.MeshLambertMaterial({color: 0x0000FF});
+    }
+    else if(mine.mineCount == 2) {
+        mine.mesh.material = new THREE.MeshLambertMaterial({color: 0x00FF00});
+    }
+    else if(mine.mineCount == 3) {
+        mine.mesh.material = new THREE.MeshLambertMaterial({color: 0xFFFF00});
+    }
+    else if(mine.mineCount == 3) {
+        mine.mesh.material = new THREE.MeshLambertMaterial({color: 0xFFA500});
+    }
+    else {
+        mine.mesh.material = new THREE.MeshLambertMaterial({color: 0xFF0000});
     }
 };
