@@ -73,7 +73,43 @@ Mine.select = function(minefield, mineMesh) {
         console.log("Mine not found");
     }
     else {
+        //
+        Mine.revealIfNotMine(minefield, mine.x -1, mine.y + 1, mine.z + 1);
+        Mine.revealIfNotMine(minefield, mine.x, mine.y + 1, mine.z + 1);
+        Mine.revealIfNotMine(minefield, mine.x +1, mine.y + 1, mine.z + 1);
+
+        Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z + 1);
+        Mine.revealIfNotMine(minefield, mine.x, mine.y, mine.z + 1);
+        Mine.revealIfNotMine(minefield, mine.x +1, mine.y, mine.z + 1);
+
+        Mine.revealIfNotMine(minefield, mine.x -1, mine.y - 1, mine.z + 1);
+        Mine.revealIfNotMine(minefield, mine.x, mine.y - 1, mine.z + 1);
+        Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z + 1);
+
+        //
+        Mine.revealIfNotMine(minefield, mine.x -1, mine.y + 1, mine.z);
+        Mine.revealIfNotMine(minefield, mine.x, mine.y + 1, mine.z);
+        Mine.revealIfNotMine(minefield, mine.x +1, mine.y + 1, mine.z);
+
         Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z);
+        Mine.revealIfNotMine(minefield, mine.x +1, mine.y, mine.z);
+
+        Mine.revealIfNotMine(minefield, mine.x -1, mine.y - 1, mine.z);
+        Mine.revealIfNotMine(minefield, mine.x, mine.y - 1, mine.z);
+        Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z);
+
+        //
+        Mine.revealIfNotMine(minefield, mine.x -1, mine.y + 1, mine.z - 1);
+        Mine.revealIfNotMine(minefield, mine.x, mine.y + 1, mine.z - 1);
+        Mine.revealIfNotMine(minefield, mine.x +1, mine.y + 1, mine.z - 1);
+
+        Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z - 1);
+        Mine.revealIfNotMine(minefield, mine.x, mine.y, mine.z - 1);
+        Mine.revealIfNotMine(minefield, mine.x +1, mine.y, mine.z - 1);
+
+        Mine.revealIfNotMine(minefield, mine.x -1, mine.y - 1, mine.z - 1);
+        Mine.revealIfNotMine(minefield, mine.x, mine.y - 1, mine.z - 1);
+        Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z - 1);
     }
 };
 
