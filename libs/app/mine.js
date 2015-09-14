@@ -31,6 +31,8 @@ Mine.createMinefield = function(size) {
         }
     }
 
+    Mine.addActiveMine(minefield, 0, 2, 1);
+    Mine.addActiveMine(minefield, 1, 0, 4);
     Mine.addActiveMine(minefield, 3, 3, 3);
     Mine.addActiveMine(minefield, 3, 2, 3);
     Mine.addActiveMine(minefield, 3, 4, 4);
