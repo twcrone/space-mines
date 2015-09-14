@@ -104,6 +104,7 @@ function onMouseDown(event) {
         selected = intersects[i].object;
         if(selected.visible) {
             selected.visible = false;
+            Mine.select(minefield, selected);
             break;
         }
     }
