@@ -30,6 +30,11 @@ Mine.createMinefield = function(size) {
             }
         }
     }
+
+    var activeMine = Mine.getMine(minefield, 3, 3, 3);
+    activeMine.isMine = true;
+    Mine.incrementNeighborMineCount(minefield, activeMine);
+
     return minefield;
 };
 
@@ -117,13 +122,56 @@ Mine.checkNeighbors = function(minefield, mine) {
     Mine.revealIfNotMine(minefield, mine.x +1, mine.y - 1, mine.z - 1);
 };
 
+Mine.incrementNeighborMineCount = function(minefield, mine) {
+//
+    Mine.getMine(minefield, mine.x -1, mine.y + 1, mine.z + 1).mineCount++;
+    Mine.getMine(minefield, mine.x, mine.y + 1, mine.z + 1).mineCount++;
+    Mine.getMine(minefield, mine.x +1, mine.y + 1, mine.z + 1).mineCount++;
+
+    Mine.getMine(minefield, mine.x -1, mine.y, mine.z + 1).mineCount++;
+    Mine.getMine(minefield, mine.x, mine.y, mine.z + 1).mineCount++;
+    Mine.getMine(minefield, mine.x +1, mine.y, mine.z + 1).mineCount++;
+
+    Mine.getMine(minefield, mine.x -1, mine.y - 1, mine.z + 1).mineCount++;
+    Mine.getMine(minefield, mine.x, mine.y - 1, mine.z + 1).mineCount++;
+    Mine.getMine(minefield, mine.x +1, mine.y - 1, mine.z + 1).mineCount++;
+
+    //
+    Mine.getMine(minefield, mine.x -1, mine.y + 1, mine.z).mineCount++;
+    Mine.getMine(minefield, mine.x, mine.y + 1, mine.z).mineCount++;
+    Mine.getMine(minefield, mine.x +1, mine.y + 1, mine.z).mineCount++;
+
+    Mine.getMine(minefield, mine.x -1, mine.y, mine.z).mineCount++;
+    Mine.getMine(minefield, mine.x +1, mine.y, mine.z).mineCount++;
+
+    Mine.getMine(minefield, mine.x -1, mine.y - 1, mine.z).mineCount++;
+    Mine.getMine(minefield, mine.x, mine.y - 1, mine.z).mineCount++;
+    Mine.getMine(minefield, mine.x +1, mine.y - 1, mine.z).mineCount++;
+
+    //
+    Mine.getMine(minefield, mine.x -1, mine.y + 1, mine.z - 1).mineCount++;
+    Mine.getMine(minefield, mine.x, mine.y + 1, mine.z - 1).mineCount++;
+    Mine.getMine(minefield, mine.x +1, mine.y + 1, mine.z - 1).mineCount++;
+
+    Mine.getMine(minefield, mine.x -1, mine.y, mine.z - 1).mineCount++;
+    Mine.getMine(minefield, mine.x, mine.y, mine.z - 1).mineCount++;
+    Mine.getMine(minefield, mine.x +1, mine.y, mine.z - 1).mineCount++;
+
+    Mine.getMine(minefield, mine.x -1, mine.y - 1, mine.z - 1).mineCount++;
+    Mine.getMine(minefield, mine.x, mine.y - 1, mine.z - 1).mineCount++;
+    Mine.getMine(minefield, mine.x +1, mine.y - 1, mine.z - 1).mineCount++;
+}
+
 Mine.revealIfNotMine = function(minefield, x, y, z) {
     var mine = Mine.getMine(minefield, x, y, z);
 
-    if(mine == null) return;
+    if(mine == null || mine.isMine) return;
 
     if(mine.mineCount == 0 && mine.mesh.visible == true) {
         mine.mesh.visible = false;
         Mine.checkNeighbors(minefield, mine);
+    }
+    else if(mine.mineCount == 1) {
+        mine.mesh.material = new THREE.MeshLambertMaterial({color: 0x0000FF});
     }
 };
