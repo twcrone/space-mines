@@ -31,20 +31,31 @@ Mine.createMinefield = function(size) {
         }
     }
 
-    Mine.addActiveMine(minefield, 2, 2, 4);
-    Mine.addActiveMine(minefield, 1, 0, 4);
-    Mine.addActiveMine(minefield, 1, 1, 3);
-    Mine.addActiveMine(minefield, 3, 2, 3);
-    Mine.addActiveMine(minefield, 3, 4, 4);
+    Mine.addActiveMinesRandomly(minefield, minefield.width);
 
     return minefield;
 };
 
+Mine.addActiveMinesRandomly = function(minefield, count) {
+    for(var i = 0; i < count; ++i) {
+        Mine.addActiveMineRandomly(minefield);
+    }
+};
+
+Mine.addActiveMineRandomly = function(minefield) {
+    var x = Math.floor(Math.random() * minefield.width);
+    var y = Math.floor(Math.random() * minefield.width);
+    var z = Math.floor(Math.random() * minefield.width);
+    Mine.addActiveMine(minefield, x, y, z);
+};
+
 Mine.addActiveMine = function(minefield, x, y, z) {
     var activeMine = Mine.getMine(minefield, x, y, z);
-    activeMine.isMine = true;
-    Mine.incrementNeighborMineCount(minefield, activeMine);
-}
+    if(activeMine.isMine == false) {
+        activeMine.isMine = true;
+        Mine.incrementNeighborMineCount(minefield, activeMine);
+    }
+};
 
 Mine.getIndex = function(x, y, z, width) {
     if(x < 0 || y < 0 || z < 0) {
@@ -87,7 +98,7 @@ Mine.select = function(minefield, mineMesh) {
     }
 
     if(mine.isMine) {
-        mine.mesh.material = new THREE.MeshBasicMaterial({color: 0xffffff});
+        Mine.revealAll(minefield);
     }
     else if(mine.mineCount == 0) {
         mine.mesh.visible = false;
@@ -143,7 +154,7 @@ Mine.incrementMineCount = function(minefield, x, y, z) {
     if(mine != null) {
         mine.mineCount++;
     }
-}
+};
 
 Mine.incrementNeighborMineCount = function(minefield, mine) {
     //
@@ -183,7 +194,7 @@ Mine.incrementNeighborMineCount = function(minefield, mine) {
     Mine.incrementMineCount(minefield, mine.x -1, mine.y - 1, mine.z - 1);
     Mine.incrementMineCount(minefield, mine.x, mine.y - 1, mine.z - 1);
     Mine.incrementMineCount(minefield, mine.x +1, mine.y - 1, mine.z - 1);
-}
+};
 
 Mine.revealIfNotMine = function(minefield, x, y, z) {
     var mine = Mine.getMine(minefield, x, y, z);
@@ -194,6 +205,25 @@ Mine.revealIfNotMine = function(minefield, x, y, z) {
         mine.mesh.visible = false;
         Mine.checkNeighbors(minefield, mine);
     }
+    else {
+        Mine.reveal(mine);
+    }
+};
+
+Mine.revealAll = function(minefield) {
+    var mines = minefield.mines;
+    for(var i = 0; i < mines.length; ++i) {
+        Mine.reveal(mines[i]);
+    }
+};
+
+Mine.reveal = function(mine) {
+    if(mine.isMine) {
+        mine.mesh.material = new THREE.MeshBasicMaterial({color: 0xffffff});
+    }
+    else if(mine.mineCount == 0) {
+        mine.mesh.visible = false;
+    }
     else if(mine.mineCount == 1) {
         mine.mesh.material = new THREE.MeshLambertMaterial({color: 0x0000FF});
     }
@@ -203,7 +233,7 @@ Mine.revealIfNotMine = function(minefield, x, y, z) {
     else if(mine.mineCount == 3) {
         mine.mesh.material = new THREE.MeshLambertMaterial({color: 0xFFFF00});
     }
-    else if(mine.mineCount == 3) {
+    else if(mine.mineCount == 4) {
         mine.mesh.material = new THREE.MeshLambertMaterial({color: 0xFFA500});
     }
     else {
