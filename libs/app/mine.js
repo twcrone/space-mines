@@ -34,6 +34,12 @@ Mine.createMinefield = function(size) {
 };
 
 Mine.getIndex = function(x, y, z, width) {
+    if(x < 0 || y < 0 || z < 0) {
+        return -1;
+    }
+    if(x >= width || y >= width || z >= width) {
+        return -1;
+    }
     return x + y * width + z * width * width;
 };
 
@@ -44,25 +50,39 @@ Mine.getCenter = function(minefield) {
 
 Mine.getMine = function(minefield, x, y, z) {
     var index = Mine.getIndex(x, y, z, minefield.width);
-    console.log("index=" + index);
+    if(index == -1) {
+        return null;
+    }
     return minefield.mines[index];
 };
 
-Mine.select = function(minefield, mineMesh) {
+Mine.findByMesh = function(minefield, mineMesh) {
     var mine;
-    for(var i = 0; i < minefield.mines.length; ++i) {
-        if(minefield.mines[i].mesh == mineMesh) {
+    for (var i = 0; i < minefield.mines.length; ++i) {
+        if (minefield.mines[i].mesh == mineMesh) {
             mine = minefield.mines[i];
             break;
         }
     }
+    return mine;
+};
+
+Mine.select = function(minefield, mineMesh) {
+    var mine = Mine.findByMesh(minefield, mineMesh);
     if(mine == undefined) {
         console.log("Mine not found");
     }
     else {
-        console.log(mine);
-        var neighbor = Mine.getMine(minefield, mine.x - 1, mine.y, mine.z);
-        console.log(neighbor);
-        neighbor.mesh.visible = false;
+        Mine.revealIfNotMine(minefield, mine.x -1, mine.y, mine.z);
+    }
+};
+
+Mine.revealIfNotMine = function(minefield, x, y, z) {
+    var mine = Mine.getMine(minefield, x, y, z);
+
+    if(mine == null) return;
+
+    if(mine.mineCount == 0) {
+        mine.mesh.visible = false;
     }
 };
