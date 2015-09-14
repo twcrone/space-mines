@@ -90,14 +90,16 @@ function init() {
 
         var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
         var intersects = raycaster.intersectObjects(mineMeshes);
-        var o = intersects[0].object;
-        if(o) {
-            scene.remove(o);
+        var selected;
 
+        for(var i = 0; i < intersects.length; ++i) {
+            selected = intersects[i].object;
+            if(selected.visible) {
+                selected.visible = false;
+                break;
+            }
         }
-        else {
-            console.log("No object intersected");
-        }
+
     };
 
     document.getElementById("WebGL-output")
