@@ -78,34 +78,35 @@ function init() {
     scene.add(camera);
     scene.add(spotlight);
 
-    document.onmousedown = function(event) {
-        var vector = new THREE.Vector3();
-
-        vector.set(
-            ( event.clientX / window.innerWidth ) * 2 - 1,
-            -( event.clientY / window.innerHeight ) * 2 + 1,
-            0.5);
-
-        vector.unproject(camera);
-
-        var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-        var intersects = raycaster.intersectObjects(mineMeshes);
-        var selected;
-
-        for(var i = 0; i < intersects.length; ++i) {
-            selected = intersects[i].object;
-            if(selected.visible) {
-                selected.visible = false;
-                break;
-            }
-        }
-
-    };
+    document.onmousedown = onMouseDown;
 
     document.getElementById("WebGL-output")
         .appendChild(renderer.domElement);
 
     renderScene(renderer, scene, camera);
+}
+
+function onMouseDown(event) {
+    var vector = new THREE.Vector3();
+
+    vector.set(
+        ( event.clientX / window.innerWidth ) * 2 - 1,
+        -( event.clientY / window.innerHeight ) * 2 + 1,
+        0.5);
+
+    vector.unproject(camera);
+
+    var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+    var intersects = raycaster.intersectObjects(mineMeshes);
+    var selected;
+
+    for(var i = 0; i < intersects.length; ++i) {
+        selected = intersects[i].object;
+        if(selected.visible) {
+            selected.visible = false;
+            break;
+        }
+    }
 }
 
 function onResize() {

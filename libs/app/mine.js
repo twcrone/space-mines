@@ -16,12 +16,12 @@ Mine.create = function (props) {
 
 Mine.createMinefield = function(size) {
     var mines = [];
-    var minefield = {mines: mines, size: size * size * size};
+    var minefield = {mines: mines, size: size * size * size, width: size};
 
     for(var x = 0; x < size; ++x) {
         for(var y = 0; y < size; ++y) {
             for (var z = 0; z < size; ++z) {
-                var position = {x: x * Mine.spacing, y: y * Mine.spacing, z: z * Mine.spacing   };
+                var position = {x: x * Mine.spacing, y: y * Mine.spacing, z: z * Mine.spacing};
                 var index = Mine.getIndex(x, y, z, size);
                 if(mines[index] != undefined) {
                     alert(index + " is already assigned!");
@@ -33,11 +33,16 @@ Mine.createMinefield = function(size) {
     return minefield;
 };
 
-Mine.getIndex = function(x, y, z, size) {
-    return x + y * size + z * size * size;
+Mine.getIndex = function(x, y, z, width) {
+    return x + y * width + z * width * width;
 };
 
 Mine.getCenter = function(minefield) {
     var index = Math.floor(minefield.mines.length / 2);
-    return minefield.mines[index].mesh.position;
+    return minefield.mines[index].mesh.position
+};
+
+Mine.getMine = function(minefield, x, y, z) {
+    var index = Mine.getIndex(x, y, z);
+    return minefield.mines[index];
 };
