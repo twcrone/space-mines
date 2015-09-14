@@ -3,25 +3,131 @@
 <html>
 
 <head>
-    <title>Simple 3D game</title>
-    <script type="text/javascript" src="libs/three.js"></script>
-    <script type="text/javascript" src="libs/FlyControls.js"></script>
-    <script type="text/javascript" src="libs/app/util.js"></script>
-    <script type="text/javascript" src="libs/app/mine.js"></script>
-    <script type="text/javascript" src="libs/app/main.js"></script>
-    <style>
-        body {
-            /* set margin to 0 and overflow to hidden, to go fullscreen */
-            margin: 0;
-            overflow: hidden;
-        }
-    </style>
+    <title>Space Mines</title>
 </head>
 <body>
+<h1>Space Mines</h1>
 
-<!-- Div which will hold the Output -->
-<div id="WebGL-output">
-</div>
+<p>A relatively simple implementation of Minesweeper in "space" or with 3 dimensions.</p>
+
+<p>You will see 3D formation of dull gray orbs on a darker background.  These are potential mines.  You can move
+amongst them without risk of setting them off.  Much like the 2D version, you can click on locations where you
+suspect there is NOT a mine.  If you click on an orb that does NOT contain a mine, it will either disappear or
+change color to something more appropriate to its proximity to an actual mine (see below).
+
+<h3>Blowing Up (aka "Failing")</h3>
+
+<p>If you do accidentally select an orb that contains an active mine, the mine field will be revealed with all active
+mines appearing a bright red.  At this point you can refresh your browser to try another game at the same difficulty or
+come back to this index page and select a different difficulty level link below.</p>
+
+<h3>Orb Colors</h3>
+
+<p>As mentioned earlier, if you click on an orb that does not contain an active mine it will disappear or change to a
+color that gives a hint to as many active mines it is adjacent to.</p>
+
+<table>
+    <tr>
+        <th>Color</th><th>Number of adjacent active mines</th>
+    </tr>
+    <tr>
+        <td>Blue</td><td>1</td>
+    </tr>
+    <tr>
+        <td>Green</td><td>2</td>
+    </tr>
+    <tr>
+        <td>Yellow</td><td>3</td>
+    </tr>
+    <tr>
+        <td>Orange</td><td>4</td>
+    </tr>
+    <tr>
+        <td>Red</td><td>5 or more</td>
+    </tr>
+</table>
+
+<h3>Getting Around</h3>
+
+<p>This games uses Three.js FlyControls.  Use your arrow keys or mouse drag to look around.  W, S, A, D, R and F to move around.
+G and E can be used "roll" left and right respectively but these are of limited value for this situation.  Here is a
+more detailed table of controls:</p>
+
+<table>
+    <tr>
+        <th>Control</th><th>Action</th>
+    </tr>
+    <tr>
+        <td>W</td><td>Move forward</td>
+    </tr>
+    <tr>
+        <td>S</td><td>Move backwards</td>
+    </tr>
+    <tr>
+        <td>A</td><td>Move left</td>
+    </tr>
+    <tr>
+        <td>D</td><td>Move right</td>
+    </tr>
+    <tr>
+        <td>R</td><td>Move up</td>
+    </tr>
+    <tr>
+        <td>F</td><td>Move down</td>
+    </tr>
+    <tr>
+        <td>G</td><td>Roll left</td>
+    </tr>
+    <tr>
+        <td>E</td><td>Roll right</td>
+    </tr>
+</table>
+
+<h3>Marking Active Mines</h3>
+
+<p>As you locate orbs that you suspect are active mines, right-click or cntrl-click on them to "mark" them as
+suspected active mines.  They will turn bright white when marked.  Once you have "marked" all the active mines
+successfully, all the orbs that are not mines will disappear and only the correctly marked active mines will
+remain.  If you see the non-active orbs disappear and only your marked mines remain, you have beaten that board.</p>
+
+
+<h3>Difficulty</h3>
+
+<table>
+    <tr>
+        <th>Difficulty</th><th>Dimensions</th><th>Number of active mines</th>
+    </tr>
+    <tr>
+        <td><a target="_blank" href="game.html?difficulty=easy">Easy</a></td><td>4x4x4</td><td>2</td>
+    </tr>
+    <tr>
+        <td><a target="_blank"  href="game.html?difficulty=average">Average</a></td><td>4x4x4</td><td>3</td>
+    </tr>
+    <tr>
+        <td><a target="_blank" href="game.html?difficulty=hard">Hard</a></td><td>5x5x5</td><td>4</td>
+    </tr>
+    <tr>
+        <td><a target="_blank" href="game.html?difficulty=very">Very Hard</a></td><td>5x5x5</td><td>5</td>
+    </tr>
+</table>
+
+<h3>Restarting a New Game</h3>
+
+<p>To restart a new game at the same difficulty level, simply click your browser's refresh button.  To try a
+different difficulty level, navigate back to this index page (e.g. "http://twcrone.com/space-mines").</p>
+
+<h3>Code</h3>
+
+<p>The code for this game is currently stored in Github <a href="https://github.com/twcrone/space-mines">here</a>.</p>
+
+<p>The game relies on Three.js and sample code from <i>Learning Three.js - The JavaScript 3D Library for WebGL</i>
+written by Jo Dirksen.
+</p>
+
+<p>Send me comments via Twitter (@twcrone) or alternatively twcrone@gmail.com.  Don't monitor the latter very well so
+your best bet is send me a tweet that you sent me some email so I'll know to look for it.</p>
+
+<p>Have fun!</p>
 
 </body>
 </html>
