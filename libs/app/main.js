@@ -13,14 +13,14 @@ function get(name){
 
 function createSpotlight() {
     var spotlight = new THREE.SpotLight(0xffffff);
-    spotlight.position.set(10, 10, 100);
+    spotlight.position.set(50, 50, 100);
     spotlight.castShadow = true;
     return spotlight;
 }
 
 function createCameraLookingAt(position) {
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.set(25, 25, 100);
+    camera.position.set(50, 50, 125);
     camera.lookAt(position);
 
     flyControls = new THREE.FlyControls(camera);
