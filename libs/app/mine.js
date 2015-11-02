@@ -52,7 +52,7 @@ Mine.getSize = function(difficulty) {
 
 Mine.getMineCount = function(difficulty) {
     if(difficulty == "insane") {
-        return 6;
+        return 7;
     }
     else if(difficulty == "extreme") {
         return 6;
