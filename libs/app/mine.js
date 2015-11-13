@@ -39,7 +39,7 @@ Mine.createMinefield = function(difficulty) {
 };
 
 Mine.getSize = function(difficulty) {
-    if(difficulty == "extreme" || difficulty == "insane") {
+    if(difficulty == "extreme" || difficulty == "insane" || difficulty == "nuts") {
         return 6;
     }
     else if(difficulty == "hard"  || difficulty == "very") {
@@ -51,7 +51,10 @@ Mine.getSize = function(difficulty) {
 };
 
 Mine.getMineCount = function(difficulty) {
-    if(difficulty == "insane") {
+    if(difficulty == "nuts") {
+        return 8;
+    }
+    else if(difficulty == "insane") {
         return 7;
     }
     else if(difficulty == "extreme") {
