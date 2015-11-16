@@ -14,9 +14,9 @@ Mine.create = function (props) {
     return mine;
 };
 
-Mine.createMinefield = function(difficulty) {
-    var size = Mine.getSize(difficulty);
-    var mineCount = Mine.getMineCount(difficulty);
+Mine.createMinefield = function(dimension, mineCount) {
+    var size = dimension;
+    var mineCount = mineCount;
     var mines = [];
     var minefield = {mines: mines, size: size * size * size, width: size, gameOver: false};
 
@@ -36,42 +36,6 @@ Mine.createMinefield = function(difficulty) {
     Mine.addActiveMinesRandomly(minefield, mineCount);
 
     return minefield;
-};
-
-Mine.getSize = function(difficulty) {
-    if(difficulty == "extreme" || difficulty == "insane" || difficulty == "nuts") {
-        return 6;
-    }
-    else if(difficulty == "hard"  || difficulty == "very") {
-        return 5;
-    }
-    else {
-        return 4;
-    }
-};
-
-Mine.getMineCount = function(difficulty) {
-    if(difficulty == "nuts") {
-        return 8;
-    }
-    else if(difficulty == "insane") {
-        return 7;
-    }
-    else if(difficulty == "extreme") {
-        return 6;
-    }
-    else if(difficulty == "average") {
-        return 3;
-    }
-    else if(difficulty == "hard") {
-        return 4;
-    }
-    else if(difficulty == "very") {
-        return 5;
-    }
-    else {
-        return 2;
-    }
 };
 
 Mine.addActiveMinesRandomly = function(minefield, count) {

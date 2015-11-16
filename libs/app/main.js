@@ -5,6 +5,8 @@ var renderer;
 var minefield;
 var mineMeshes = [];
 var difficulty;
+var mineCount;
+var dimension;
 
 function get(name){
     if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
@@ -60,7 +62,7 @@ function renderScene() {
 }
 
 function addMinefieldTo(scene) {
-    minefield = Mine.createMinefield(difficulty);
+    minefield = Mine.createMinefield(dimension, mineCount);
     for(var i = 0; i < minefield.size; ++i) {
         var mesh = minefield.mines[i].mesh;
         scene.add(mesh);
@@ -70,7 +72,8 @@ function addMinefieldTo(scene) {
 
 function init() {
 
-    difficulty = get("difficulty");
+    mineCount = get("mineCount");
+    dimension = get("dimension");
 
     scene = new THREE.Scene();
     addMinefieldTo(scene);
